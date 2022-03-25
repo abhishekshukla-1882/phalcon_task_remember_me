@@ -20,7 +20,6 @@ use Phalcon\Config;
 use Phalcon\Config\ConfigFactory;
 
 
-
 $config = new Config([]);
 $filename = '../app/etc/config.php';
 $factory = new ConfigFactory();
@@ -36,6 +35,12 @@ $loader->registerDirs(
     [
         APP_PATH . "/controllers/",
         APP_PATH . "/models/",
+    ],
+    
+);
+$loader->registerNamespaces(
+    [
+        'App\Components' => APP_PATH . "/Component"
     ]
 );
 
@@ -51,6 +56,21 @@ $container->set(
         return $view;
     }
 );
+// $loader = new Loader();
+
+// $loader->registerDirs(
+//     [
+//         APP_PATH . "/controllers",
+//         APP_PATH . "/models/"
+
+//     ]
+//     );
+//     $loader->registerNamespaces(
+//         [
+//             'App\Components' => APP_PATH . "/components"
+//         ]
+//         );
+//     $loader->register();
 
 $container->set(
     'url',
