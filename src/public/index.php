@@ -10,17 +10,21 @@ use Phalcon\Mvc\View;
 use Phalcon\Mvc\Application;
 use Phalcon\Url;
 use Phalcon\Db\Adapter\Pdo\Mysql;
-use Phalcon\Config;
 use Phalcon\Http\Response;
 use Phalcon\Http\Response\Headers;
 use Phalcon\Http\Cookie;
 use Phalcon\Di;
 use Phalcon\Session\Manager;
 use Phalcon\Session\Adapter\Stream;
+use Phalcon\Config;
+use Phalcon\Config\ConfigFactory;
+
 
 
 $config = new Config([]);
-
+$filename = '../app/etc/config.php';
+$factory = new ConfigFactory();
+$config = $factory->newInstance('php',$filename);
 // Define some absolute path constants to aid in locating resources
 define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/app');
@@ -64,22 +68,31 @@ $container->set(
         return date('Y:M:D:H:M:S');
     }
 );
-$application = new Application($container);
 
 
 
 $container->set(
     'db',
     function () {
+        $config = $this->get('config');
+
         return new Mysql(
             [
-                'host'     => 'mysql-server',
-                'username' => 'root',
-                'password' => 'secret',
-                'dbname'   => 'phalcon',
+                'host'     => $config->database->host,
+                'username' => $config->database->username,
+                'password' => $config->database->password,
+                'dbname'   => $config->database->dbname
                 ]
             );
         }
+);
+$application = new Application($container);
+
+$container->set(
+    'config',
+    $config,
+    true
+
 );
 
 // $di->setShared(
